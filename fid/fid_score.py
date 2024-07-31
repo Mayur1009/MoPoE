@@ -34,14 +34,14 @@ limitations under the License.
 """
 import os
 import pathlib
-from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import numpy as np
 import torch
 from scipy import linalg
-from scipy.misc import imread
+# from scipy.misc import imread
+from imageio import imread
 from torch.nn.functional import adaptive_avg_pool2d
-
 
 print(torch.cuda.is_available())
 
