@@ -1,6 +1,7 @@
 data/
 typings/
 trained_classifiers/
+runs/
 pt_inception-2015-12-05-6726825d.pth
 # Byte-compiled / optimized / DLL files
 __pycache__/
