@@ -129,7 +129,7 @@ def train(epoch, exp, tb_logger):
     mm_vae.train()
     exp.mm_vae = mm_vae
 
-    d_loader = DataLoader(exp.dataset_train, batch_size=exp.flags.batch_size, shuffle=True, num_workers=8, drop_last=True)
+    d_loader = DataLoader(exp.dataset_train, batch_size=exp.flags.batch_size, shuffle=True, num_workers=0, drop_last=True)
 
     for iteration, batch in tqdm(enumerate(d_loader)):
         basic_routine = basic_routine_epoch(exp, batch)
