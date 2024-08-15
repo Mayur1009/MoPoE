@@ -16,7 +16,6 @@ if __name__ == '__main__':
     use_cuda = torch.cuda.is_available()
     mac_mps = torch.backends.mps.is_available()
     FLAGS.device = torch.device('cuda' if use_cuda else 'mps' if mac_mps else 'cpu')
-    print(f'{FLAGS.device=}')
 
     if FLAGS.method == 'poe':
         FLAGS.modality_poe=True

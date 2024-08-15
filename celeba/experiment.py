@@ -22,7 +22,7 @@ from celeba.networks.ConvNetworksTextCelebA import EncoderText, DecoderText
 from utils.BaseExperiment import BaseExperiment
 
 
-LABELS = [
+LABELS_celeba = [
     "5_o_Clock_Shadow",
     "Arched_Eyebrows",
     "Attractive",
@@ -65,10 +65,92 @@ LABELS = [
     "Young",
 ]
 
+LABELS_coco = [
+    "airplane",
+    "apple",
+    "backpack",
+    "banana",
+    "baseball bat",
+    "baseball glove",
+    "bear",
+    "bed",
+    "bench",
+    "bicycle",
+    "bird",
+    "boat",
+    "book",
+    "bottle",
+    "bowl",
+    "broccoli",
+    "bus",
+    "cake",
+    "car",
+    "carrot",
+    "cat",
+    "cell phone",
+    "chair",
+    "clock",
+    "couch",
+    "cow",
+    "cup",
+    "dining table",
+    "dog",
+    "donut",
+    "elephant",
+    "fire hydrant",
+    "fork",
+    "frisbee",
+    "giraffe",
+    "hair drier",
+    "handbag",
+    "horse",
+    "hot dog",
+    "keyboard",
+    "kite",
+    "knife",
+    "laptop",
+    "microwave",
+    "motorcycle",
+    "mouse",
+    "orange",
+    "oven",
+    "parking meter",
+    "person",
+    "pizza",
+    "potted plant",
+    "refrigerator",
+    "remote",
+    "sandwich",
+    "scissors",
+    "sheep",
+    "sink",
+    "skateboard",
+    "skis",
+    "snowboard",
+    "spoon",
+    "sports ball",
+    "stop sign",
+    "suitcase",
+    "surfboard",
+    "teddy bear",
+    "tennis racket",
+    "tie",
+    "toaster",
+    "toilet",
+    "toothbrush",
+    "traffic light",
+    "train",
+    "truck",
+    "tv",
+    "umbrella",
+    "vase",
+    "wine glass",
+    "zebra",
+]
 
 class CelebaExperiment(BaseExperiment):
     def __init__(self, flags, alphabet):
-        self.labels = LABELS
+        self.labels = LABELS_coco if flags.dataset == "coco" else LABELS_celeba
         self.flags = flags
         self.dataset = flags.dataset
         self.plot_img_size = torch.Size((3, 64, 64))
@@ -126,7 +208,7 @@ class CelebaExperiment(BaseExperiment):
         transform = transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Lambda(crop),
+                # transforms.Lambda(crop),
                 transforms.ToPILImage(),
                 transforms.Resize(
                     size=(self.flags.img_size, self.flags.img_size),

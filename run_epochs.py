@@ -189,11 +189,16 @@ def test(epoch, exp, tb_logger):
 
 
 def run_epochs(exp):
+    import wandb
+    wandb.tensorboard.patch(root_logdir=exp.flags.dir_logs, pytorch=True)
+    wandb.init(project=f"{exp.flags.dataset}", name=exp.flags.str_experiment, sync_tensorboard=True)
+
     # initialize summary writer
     writer = SummaryWriter(exp.flags.dir_logs)
     tb_logger = TBLogger(exp.flags.str_experiment, writer)
     str_flags = utils.save_and_log_flags(exp.flags)
     tb_logger.writer.add_text("FLAGS", str_flags, 0)
+
 
     print("training epochs progress:")
     for epoch in range(exp.flags.start_epoch, exp.flags.end_epoch):

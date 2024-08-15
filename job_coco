@@ -11,24 +11,25 @@ echo "TMPDIR: $TMPDIR"
 METHOD="joint_elbo" # NOTE: valid options are "joint_elbo", "poe", and "moe"
 LIKELIHOOD_M1="laplace"
 LIKELIHOOD_M2="categorical"
-DIR_DATA="$PWD/data/CelebA"
-DIR_TEXT="$PWD/data/CelebA"
+DIR_DATA="$PWD/data/coco"
+DIR_TEXT="$PWD/data/coco"
 DIR_CLF="$PWD/trained_classifiers/trained_clfs_celeba"
-DIR_EXPERIMENT="$PWD/runs/CelebA/$METHOD/factorized/${LIKELIHOOD_M1}_${LIKELIHOOD_M2}"
+DIR_EXPERIMENT="$PWD/runs/coco/$METHOD/factorized/${LIKELIHOOD_M1}_${LIKELIHOOD_M2}"
 PATH_INC_V3="$PWD/pt_inception-2015-12-05-6726825d.pth"
-DIR_FID="$TMPDIR/CelebA"
+DIR_FID="$TMPDIR/coco"
 
-# move CelebA dataset to $TMPDIR
-if [ ! -d "${TMPDIR}/CelebA" ]; then
-    mkdir -p "${TMPDIR}/CelebA"
-    cp "${DIR_DATA}/img_align_celeba.zip" "${TMPDIR}/CelebA/"
-    cp "${DIR_DATA}/list_eval_partition.csv" "${TMPDIR}/CelebA/"
-    cp "${DIR_DATA}/list_attr_celeba.csv" "${TMPDIR}/CelebA/"
-    unzip -q -o "${TMPDIR}/CelebA/img_align_celeba.zip" -d "${TMPDIR}/CelebA/"
-    # ls "${TMPDIR}/CelebA/img_align_celeba/"
+# move coco dataset to $TMPDIR
+if [ ! -d "${TMPDIR}/coco" ]; then
+    mkdir -p "${TMPDIR}/coco"
+    cp "${DIR_DATA}/img_align_celeba.zip" "${TMPDIR}/coco/"
+    cp "${DIR_DATA}/list_eval_partition.csv" "${TMPDIR}/coco/"
+    cp "${DIR_DATA}/list_attr_celeba.csv" "${TMPDIR}/coco/"
+    unzip -q -o "${TMPDIR}/coco/img_align_celeba.zip" -d "${TMPDIR}/coco/"
+    mv "${TMPDIR}/coco/img_aligh_celeba" "${TMPDIR}/coco/img_align_celeba"
 fi
+# ls "${TMPDIR}/coco/img_align_celeba/"
 
-python main_celeba.py --dir_data="$TMPDIR" \
+python main_celeba.py --dataset="coco" --dir_data="$TMPDIR" \
     --dir_text="$DIR_TEXT" \
     --dir_clf="$DIR_CLF" \
     --dir_experiment="$DIR_EXPERIMENT" \
@@ -49,7 +50,7 @@ python main_celeba.py --dir_data="$TMPDIR" \
     --initial_learning_rate=0.0005 \
     --eval_freq=25 \
     --eval_freq_fid=25 \
-    --end_epoch=250 \
+    --end_epoch=10 \
     --factorized_representation \
     --calc_nll \
     --eval_lr \

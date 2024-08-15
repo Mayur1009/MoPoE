@@ -1,9 +1,9 @@
-
 from abc import ABC, abstractmethod
 import os
 
 import torch
 import torch.distributions as dist
+
 
 class Modality(ABC):
     def __init__(self, name, enc, dec, class_dim, style_dim, lhood_name):
@@ -15,21 +15,19 @@ class Modality(ABC):
         self.likelihood_name = lhood_name
         self.likelihood = self.get_likelihood(lhood_name)
 
-
     def get_likelihood(self, name):
-        if name == 'laplace':
+        if name == "laplace":
             pz = dist.Laplace
-        elif name == 'bernoulli':
+        elif name == "bernoulli":
             pz = dist.Bernoulli
-        elif name == 'normal':
+        elif name == "normal":
             pz = dist.Normal
-        elif name == 'categorical':
+        elif name == "categorical":
             pz = dist.OneHotCategorical
         else:
-            print('likelihood not implemented')
+            print("likelihood not implemented")
             pz = None
         return pz
-
 
     @abstractmethod
     def save_data(self, d, fn, args):
@@ -39,16 +37,15 @@ class Modality(ABC):
     def plot_data(self, d):
         pass
 
-
     def calc_log_prob(self, out_dist, target, norm_value):
         log_prob = out_dist.log_prob(target).sum()
-        mean_val_logprob = log_prob/norm_value
+        mean_val_logprob = log_prob / norm_value
         return mean_val_logprob
 
-
     def save_networks(self, dir_checkpoints):
-        torch.save(self.encoder.state_dict(), os.path.join(dir_checkpoints,
-                                                           'enc_' + self.name))
-        torch.save(self.decoder.state_dict(), os.path.join(dir_checkpoints,
-                                                           'dec_' + self.name))
-
+        torch.save(
+            self.encoder.state_dict(), os.path.join(dir_checkpoints, "enc_" + self.name)
+        )
+        torch.save(
+            self.decoder.state_dict(), os.path.join(dir_checkpoints, "dec_" + self.name)
+        )
