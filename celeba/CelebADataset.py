@@ -43,6 +43,9 @@ class CelebaDataset(Dataset):
         if self.transform is not None:
             img = self.transform(img)
         text_str = text.one_hot_encode(self.args.len_sequence, self.alphabet, self.y[index])
+        # print(f'{self.img_names[index]=}{text_str.shape=}')
+        # print(f'{text_str.sum(-1).unique()=}')
+        # print(f'{text_str.sum(-1).eq(1).all()=}')
         label = torch.from_numpy((self.labels[index,1:] > 0).astype(int)).float()
         sample = {'img': img, 'text': text_str}
         return sample, label

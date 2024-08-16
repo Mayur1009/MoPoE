@@ -38,6 +38,18 @@ class Modality(ABC):
         pass
 
     def calc_log_prob(self, out_dist, target, norm_value):
+        # if self.likelihood_name == "categorical":
+        #     print(f'{target.shape=}')
+        #     is_boolean = ((target == 0) | (target == 1)).all(-1)
+        #     is_normalized = target.sum(-1).eq(1)
+        #     print(f'{is_boolean=}')
+        #     print(f'{is_normalized=}')
+        #     print(f'{is_boolean & is_normalized=}')
+        #     print(f'{(is_boolean & is_normalized).all()=}')
+        #     nt = torch.argwhere(is_boolean == 0)
+        #     nt2 = torch.argwhere(is_normalized == 0)
+        #     print(f'{nt=}')
+        #     print(f'{nt2=}')
         log_prob = out_dist.log_prob(target).sum()
         mean_val_logprob = log_prob / norm_value
         return mean_val_logprob

@@ -19,13 +19,12 @@ PATH_INC_V3="$PWD/pt_inception-2015-12-05-6726825d.pth"
 DIR_FID="$TMPDIR/coco"
 
 # move coco dataset to $TMPDIR
-if [ ! -d "${TMPDIR}/coco" ]; then
-    mkdir -p "${TMPDIR}/coco"
+mkdir -p "${TMPDIR}/coco"
+cp "${DIR_DATA}/list_eval_partition.csv" "${TMPDIR}/coco/"
+cp "${DIR_DATA}/list_attr_celeba.csv" "${TMPDIR}/coco/"
+if [ ! -d "${TMPDIR}/coco/img_align_celeba" ]; then
     cp "${DIR_DATA}/img_align_celeba.zip" "${TMPDIR}/coco/"
-    cp "${DIR_DATA}/list_eval_partition.csv" "${TMPDIR}/coco/"
-    cp "${DIR_DATA}/list_attr_celeba.csv" "${TMPDIR}/coco/"
     unzip -q -o "${TMPDIR}/coco/img_align_celeba.zip" -d "${TMPDIR}/coco/"
-    mv "${TMPDIR}/coco/img_aligh_celeba" "${TMPDIR}/coco/img_align_celeba"
 fi
 # ls "${TMPDIR}/coco/img_align_celeba/"
 
