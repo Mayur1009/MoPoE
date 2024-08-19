@@ -1,0 +1,19 @@
+name: mopoe
+channels:
+  - conda-forge
+  - pytorch
+  - nvidia
+dependencies:
+  - matplotlib
+  - pandas
+  - scikit-learn
+  - scipy
+  - pytorch
+  - pytorch-cuda
+  - torchvision
+  - torchaudio
+  - tensorflow
+  - tensorboardx
+  - tqdm
+  - scikit-image
+  - jupyterlab

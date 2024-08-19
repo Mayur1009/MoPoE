@@ -15,10 +15,10 @@ class MMNISTDataset(Dataset):
 
     def __init__(self, unimodal_datapaths, transform=None, target_transform=None):
         """
-            Args: unimodal_datapaths (list): list of paths to weakly-supervised unimodal datasets with samples that
-                    correspond by index. Therefore the numbers of samples of all datapaths should match.
-                transform: tranforms on colored MNIST digits.
-                target_transform: transforms on labels.
+        Args: unimodal_datapaths (list): list of paths to weakly-supervised unimodal datasets with samples that
+                correspond by index. Therefore the numbers of samples of all datapaths should match.
+            transform: tranforms on colored MNIST digits.
+            target_transform: transforms on labels.
         """
         super().__init__()
         self.num_modalities = len(unimodal_datapaths)
@@ -40,25 +40,29 @@ class MMNISTDataset(Dataset):
     @staticmethod
     def _create_mmnist_dataset(savepath, backgroundimagepath, num_modalities, train):
         """Created the Multimodal MNIST Dataset under 'savepath' given a directory of background images.
-        
-            Args:
-                savepath (str): path to directory that the dataset will be written to. Will be created if it does not
-                    exist.
-                backgroundimagepath (str): path to a directory filled with background images. One background images is
-                    used per modality.
-                num_modalities (int): number of modalities to create.
-                train (bool): create the dataset based on MNIST training (True) or test data (False).
-        
+
+        Args:
+            savepath (str): path to directory that the dataset will be written to. Will be created if it does not
+                exist.
+            backgroundimagepath (str): path to a directory filled with background images. One background images is
+                used per modality.
+            num_modalities (int): number of modalities to create.
+            train (bool): create the dataset based on MNIST training (True) or test data (False).
+
         """
 
         # load MNIST data
         mnist = datasets.MNIST("/tmp", train=train, download=True, transform=None)
 
         # load background images
-        background_filepaths = sorted(glob.glob(os.path.join(backgroundimagepath, "*.jpg")))  # TODO: handle more filetypes
+        background_filepaths = sorted(
+            glob.glob(os.path.join(backgroundimagepath, "*.jpg"))
+        )  # TODO: handle more filetypes
         print("\nbackground_filepaths:\n", background_filepaths, "\n")
         if num_modalities > len(background_filepaths):
-            raise ValueError("Number of background images must be larger or equal to number of modalities")
+            raise ValueError(
+                "Number of background images must be larger or equal to number of modalities"
+            )
         background_images = [Image.open(fp) for fp in background_filepaths]
 
         # create the folder structure: savepath/m{1..num_modalities}
@@ -73,24 +77,34 @@ class MMNISTDataset(Dataset):
         for digit in range(10):
             ixs = (mnist.targets == digit).nonzero()
             for m in range(num_modalities):
-                ixs_perm = ixs[torch.randperm(len(ixs))]  # one permutation per modality and digit label
+                ixs_perm = ixs[
+                    torch.randperm(len(ixs))
+                ]  # one permutation per modality and digit label
                 for i, ix in enumerate(ixs_perm):
                     # add background image
-                    new_img = MMNISTDataset._add_background_image(background_images[m], mnist.data[ix])
+                    new_img = MMNISTDataset._add_background_image(
+                        background_images[m], mnist.data[ix]
+                    )
                     # save as png
                     filepath = os.path.join(savepath, "m%d/%d.%d.png" % (m, i, digit))
                     save_image(new_img, filepath)
                     # log the progress
                     cnt += 1
                     if cnt % 10000 == 0:
-                        print("Saved %d/%d images to %s" % (cnt, len(mnist)*num_modalities, savepath))
+                        print(
+                            "Saved %d/%d images to %s"
+                            % (cnt, len(mnist) * num_modalities, savepath)
+                        )
         assert cnt == len(mnist) * num_modalities
 
     @staticmethod
-    def _add_background_image(background_image_pil, mnist_image_tensor, change_colors=False):
-
+    def _add_background_image(
+        background_image_pil, mnist_image_tensor, change_colors=False
+    ):
         # binarize mnist image
-        img_binarized = (mnist_image_tensor > 128).type(torch.bool)  # NOTE: mnist is _not_ normalized to [0, 1]
+        img_binarized = (mnist_image_tensor > 128).type(
+            torch.bool
+        )  # NOTE: mnist is _not_ normalized to [0, 1]
 
         # squeeze away color channel
         if img_binarized.ndimension() == 2:
@@ -98,8 +112,10 @@ class MMNISTDataset(Dataset):
         elif img_binarized.ndimension() == 3:
             img_binarized = img_binarized.squeeze(0)
         else:
-            raise ValueError("Unexpected dimensionality of MNIST image:", img_binarized.shape)
- 
+            raise ValueError(
+                "Unexpected dimensionality of MNIST image:", img_binarized.shape
+            )
+
         # add background image
         x_c = np.random.randint(0, background_image_pil.size[0] - 28)
         y_c = np.random.randint(0, background_image_pil.size[1] - 28)
@@ -130,7 +146,10 @@ class MMNISTDataset(Dataset):
             labels = [self.transform(label) for label in labels]
 
         images_dict = {"m%d" % m: images[m] for m in range(self.num_modalities)}
-        return images_dict, labels[0]  # NOTE: for MMNIST, labels are shared across modalities, so can take one value
+        return (
+            images_dict,
+            labels[0],
+        )  # NOTE: for MMNIST, labels are shared across modalities, so can take one value
 
     def __len__(self):
         return self.num_files
@@ -138,15 +157,19 @@ class MMNISTDataset(Dataset):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--seed', type=int, default=42)
-    parser.add_argument('--num-modalities', type=int, default=5)
-    parser.add_argument('--savepath-train', type=str, required=True)
-    parser.add_argument('--savepath-test', type=str, required=True)
-    parser.add_argument('--backgroundimagepath', type=str, required=True)
+    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--num-modalities", type=int, default=5)
+    parser.add_argument("--savepath-train", type=str, required=True)
+    parser.add_argument("--savepath-test", type=str, required=True)
+    parser.add_argument("--backgroundimagepath", type=str, required=True)
     args = parser.parse_args()  # use vars to convert args into a dict
     print("\nARGS:\n", args)
 
     # create dataset
-    MMNISTDataset._create_mmnist_dataset(args.savepath_train, args.backgroundimagepath, args.num_modalities, train=True)
-    MMNISTDataset._create_mmnist_dataset(args.savepath_test, args.backgroundimagepath, args.num_modalities, train=False)
+    MMNISTDataset._create_mmnist_dataset(
+        args.savepath_train, args.backgroundimagepath, args.num_modalities, train=True
+    )
+    MMNISTDataset._create_mmnist_dataset(
+        args.savepath_test, args.backgroundimagepath, args.num_modalities, train=False
+    )
     print("Done.")
